@@ -1,14 +1,14 @@
-import React from "react"
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import { AuthProvider } from "../context/AuthContext"
+import { AuthProvider } from "../context/AuthContext";
 
-import Chats from "./Chats"
-import Login from "./Login"
+import Chats from "./Chats";
+import Login from "./Login";
 
 function App() {
   return (
-    <div style={{ fontFamily: 'Avenir' }}>
+    <div style={{ fontFamily: "Avenir" }}>
       <Router>
         <AuthProvider>
           <Switch>
@@ -18,7 +18,7 @@ function App() {
         </AuthProvider>
       </Router>
     </div>
-  )
+  );
 }
 
 export default App;

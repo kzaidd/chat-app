@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { ChatEngine } from "react-chat-engine";
 import { auth } from "../firebase";
@@ -33,7 +33,8 @@ const Chats = () => {
       return;
     }
 
-    axios.get("https://api.chatengine.io/user/me/", {
+    axios
+      .get("https://api.chatengine.io/users/me/", {
         headers: {
           "project-id": process.env.REACT_APP_CHAT_ENGINE_ID,
           "user-name": user.email, //This user data is coming from line 13
@@ -42,17 +43,18 @@ const Chats = () => {
       })
 
       .then(() => setLoading(false))
+
       .catch(() => {
         let formdata = new FormData();
         formdata.append("email", user.email);
         formdata.append("username", user.email);
         formdata.append("secret", user.uid);
 
-        getFile(user.photoURL)
-        .then((avatar) => {
-          formdata.append('avatar', avatar, avatar.name);
+        getFile(user.photoURL).then((avatar) => {
+          formdata.append("avatar", avatar, avatar.name);
 
-          axios.post("https://api.chatengine.io/users/", formdata, {
+          axios
+            .post("https://api.chatengine.io/users/", formdata, {
               headers: { "private-key": process.env.REACT_APP_CHAT_ENGINE_KEY },
             })
             .then(() => setLoading(false))
@@ -61,7 +63,7 @@ const Chats = () => {
       });
   }, [user, history]);
 
-  if (!user || user === null) return "Loading...";
+  if (!user || loading) return "Loading...";
 
   return (
     <div className="chats-page">
@@ -74,7 +76,7 @@ const Chats = () => {
 
       <ChatEngine
         height="calc(100vh - 66px)"
-        projectID= {process.env.REACT_APP_CHAT_ENGINE_ID}
+        projectID={process.env.REACT_APP_CHAT_ENGINE_ID}
         userName={user.email}
         userSecret={user.uid}
       />
@@ -83,4 +85,3 @@ const Chats = () => {
 };
 
 export default Chats;
-
