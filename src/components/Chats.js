@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef,useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { ChatEngine } from "react-chat-engine";
 import { auth } from "../firebase";
@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 
 const Chats = () => {
+  const didMountRef = useRef(false)
   const history = useHistory();
   const { user } = useAuth(); //Fetching user data
   const [loading, setLoading] = useState(true);
@@ -27,10 +28,16 @@ const Chats = () => {
   };
 
   useEffect(() => {
-    if (!user) {
-      history.push("./");
+    if (!didMountRef.current) {
+      didMountRef.current = true
 
-      return;
+      if (!user || user === null) {
+        history.push("/")
+        return
+//     if (!user) {
+//       history.push("./");
+
+//       return;
     }
 
     axios
@@ -44,7 +51,7 @@ const Chats = () => {
 
       .then(() => setLoading(false))
 
-      .catch(() => {
+      .catch((e) => {
         let formdata = new FormData();
         formdata.append("email", user.email);
         formdata.append("username", user.email);
@@ -58,12 +65,12 @@ const Chats = () => {
               headers: { "private-key": process.env.REACT_APP_CHAT_ENGINE_KEY },
             })
             .then(() => setLoading(false))
-            .catch((error) => console.log(error));
+            .catch(e => console.log('e', e.response));
         });
       });
   }, [user, history]);
 
-  if (!user || loading) return "Loading...";
+  if (!user || loading) return <div />;
 
   return (
     <div className="chats-page">
